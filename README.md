@@ -210,6 +210,27 @@ Serve the folder with a local server:
 
 Open `login.html` and log in with the Admin account you created in step 3.
 
+### 7. Deploy to Vercel (optional)
+This is a static site, but `js/supabase-config.js` (your real keys) is gitignored, so it
+won't exist in a fresh clone or a Vercel build unless you generate it. `build.js` does that
+from environment variables:
+
+1. Push this repo to GitHub (already done if you're reading this after that step).
+2. On https://vercel.com, **Add New > Project**, import the GitHub repo.
+3. Framework Preset: **Other**. Build Command: `npm run build`. Output Directory: leave as
+   the project root (`.`) — this is a static site, not a framework app.
+4. Before deploying, go to **Settings > Environment Variables** and add:
+   - `SUPABASE_URL`
+   - `SUPABASE_ANON_KEY` (your publishable key)
+   - `SUPABASE_SERVICE_KEY` (your secret / legacy `service_role` key)
+5. Deploy. Vercel runs `npm run build`, which runs `build.js`, which writes
+   `js/supabase-config.js` from those env vars before serving the site.
+
+⚠️ Reminder: this is still a client-side app, so once deployed, your service_role key is
+present in the site's JS and visible to anyone who opens dev tools on your live URL — same
+tradeoff as running it locally, just now on a public link. Don't share that link widely if
+you're not ready for that; treat it as a private/demo deployment for grading purposes.
+
 ## Project structure
 ```
 login.html               Login page (no sign-up)
@@ -226,6 +247,9 @@ js/teachers.js            Teachers page: add/edit/delete (admin only)
 js/courses.js             Courses page: add/edit/delete (admin), view-only (everyone else)
 js/enrollment.js          Enrollments page: enroll/remove (admin), view (scoped by role)
 js/profile.js             Own profile: view + edit full name
+js/supabase-config.example.js  Template for supabase-config.js (safe to commit)
+build.js                  Vercel build step: writes supabase-config.js from env vars
+package.json              Just declares the "build" script Vercel runs
 ```
 
 ## Data model (Postgres tables)
