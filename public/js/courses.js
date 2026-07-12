@@ -7,6 +7,18 @@ const courseIdField = document.getElementById('course-id');
 
 let coursesCache = [];
 
+function populateInstructorDropdown(teachers) {
+  const select = document.getElementById('course-instructor');
+  if (!select) return;
+  const current = select.value;
+  select.innerHTML = '<option value="">Select Instructor</option>' +
+    teachers.map(t => {
+      const name = t.profiles ? t.profiles.full_name : 'Unknown';
+      return `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`;
+    }).join('');
+  select.value = current;
+}
+
 function renderCourses() {
   if (!coursesTableBody) return;
 

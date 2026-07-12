@@ -47,6 +47,7 @@ async function loadTeachers() {
   if (error) { console.error(error); return; }
   teachersCache = data;
   renderTeachers();
+  if (typeof populateInstructorDropdown === 'function') populateInstructorDropdown(teachersCache);
 }
 
 function resetTeacherForm() {

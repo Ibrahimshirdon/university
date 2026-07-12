@@ -149,7 +149,9 @@
             <input type="text" id="course-name" placeholder="Course Name" required>
             <input type="text" id="course-code" placeholder="Course Code" required>
             <input type="number" id="course-credits" placeholder="Credits" min="1" max="10" required>
-            <input type="text" id="course-instructor" placeholder="Instructor" required>
+            <select id="course-instructor" required>
+              <option value="">Select Instructor</option>
+            </select>
             <button type="submit" class="btn-primary" id="course-submit-btn">Add Course</button>
           </div>
         </form>
