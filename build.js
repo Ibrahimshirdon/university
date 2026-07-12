@@ -1,4 +1,4 @@
-// Runs during the Vercel build. Generates js/supabase-config.js from
+// Runs during the Vercel build. Generates public/js/supabase-config.js from
 // environment variables so the real keys never have to live in git.
 const fs = require('fs');
 
@@ -22,5 +22,5 @@ const sbAdmin = supabase.createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
 });
 `;
 
-fs.writeFileSync('js/supabase-config.js', content);
-console.log('Generated js/supabase-config.js from environment variables.');
+fs.writeFileSync('public/js/supabase-config.js', content);
+console.log('Generated public/js/supabase-config.js from environment variables.');

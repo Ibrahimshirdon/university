@@ -17,8 +17,8 @@ built with plain HTML/CSS/JS and Supabase (Postgres + Auth). No build step.
 ## ⚠️ Security note (read this)
 The Admin portal creates logins using Supabase's **service_role** ("secret") key, which
 bypasses all Row Level Security. Because this is a static site with no backend server,
-that key has to live in the browser's JS (see `js/supabase-config.js`). Anyone who views
-that file's source can extract the key and get full database access.
+that key has to live in the browser's JS (see `public/js/supabase-config.js`). Anyone who
+views that file's source can extract the key and get full database access.
 
 **This is acceptable for a class assignment / local demo, but do not deploy this build
 of the admin page to a public URL.** A real production version would move user-creation
@@ -186,17 +186,17 @@ insert into public.profiles (id, full_name, email, role)
 values ('PASTE_UID_HERE', 'Your Name', 'your@email.com', 'admin');
 ```
 
-Now you can log in at `login.html` with that email/password and you'll land in the Admin
-portal. From there, use the Admin's Students/Teachers pages to create Teacher and Student
-logins — no more manual SQL needed after this.
+Now you can log in at `public/login.html` with that email/password and you'll land in the
+Admin portal. From there, use the Admin's Students/Teachers pages to create Teacher and
+Student logins — no more manual SQL needed after this.
 
 ### 4. Enable Email/Password auth
 Left sidebar: **Authentication > Sign In / Providers** — make sure **Email** is Enabled.
 
 ### 5. Get your API keys
-Copy [js/supabase-config.example.js](js/supabase-config.example.js) to `js/supabase-config.js`
-(that filename is gitignored so your real keys never get committed). Then fill it in from
-**Project Settings (gear icon) > API Keys**:
+Copy [public/js/supabase-config.example.js](public/js/supabase-config.example.js) to
+`public/js/supabase-config.js` (that filename is gitignored so your real keys never get
+committed). Then fill it in from **Project Settings (gear icon) > API Keys**:
 - **Publishable key** (`sb_publishable_...`) — safe for the browser.
 - **Secret key** — ⚠️ only for the admin-only code path (see the security note above). If
   you get "Invalid API key" errors when creating users, use the **legacy `service_role`
@@ -204,27 +204,29 @@ Copy [js/supabase-config.example.js](js/supabase-config.example.js) to `js/supab
 - **Project URL** from the **Data API** section (same page area).
 
 ### 6. Run it
-Serve the folder with a local server:
-- VS Code: install "Live Server", right-click `login.html` > **Open with Live Server**, or
-- Node: `npx serve .`
+Serve the `public` folder with a local server:
+- VS Code: install "Live Server", right-click `public/login.html` > **Open with Live Server**, or
+- Node: `npx serve public`
 
-Open `login.html` and log in with the Admin account you created in step 3.
+Open `public/login.html` and log in with the Admin account you created in step 3.
 
 ### 7. Deploy to Vercel (optional)
-This is a static site, but `js/supabase-config.js` (your real keys) is gitignored, so it
-won't exist in a fresh clone or a Vercel build unless you generate it. `build.js` does that
-from environment variables:
+This is a static site, but `public/js/supabase-config.js` (your real keys) is gitignored,
+so it won't exist in a fresh clone or a Vercel build unless you generate it. `build.js`
+does that from environment variables. The site lives in a `public/` folder specifically
+because Vercel auto-detects that as the output directory — no manual Output Directory
+config needed.
 
 1. Push this repo to GitHub (already done if you're reading this after that step).
 2. On https://vercel.com, **Add New > Project**, import the GitHub repo.
-3. Framework Preset: **Other**. Build Command: `npm run build`. Output Directory: leave as
-   the project root (`.`) — this is a static site, not a framework app.
-4. Before deploying, go to **Settings > Environment Variables** and add:
+3. Framework Preset: **Other**. Build Command: `npm run build`. Output Directory: leave on
+   its default (it auto-detects `public`).
+4. Before deploying, expand **Environment Variables** on the same import screen and add:
    - `SUPABASE_URL`
    - `SUPABASE_ANON_KEY` (your publishable key)
    - `SUPABASE_SERVICE_KEY` (your secret / legacy `service_role` key)
 5. Deploy. Vercel runs `npm run build`, which runs `build.js`, which writes
-   `js/supabase-config.js` from those env vars before serving the site.
+   `public/js/supabase-config.js` from those env vars before serving the site.
 
 ⚠️ Reminder: this is still a client-side app, so once deployed, your service_role key is
 present in the site's JS and visible to anyone who opens dev tools on your live URL — same
@@ -233,23 +235,23 @@ you're not ready for that; treat it as a private/demo deployment for grading pur
 
 ## Project structure
 ```
-login.html               Login page (no sign-up)
-index.html               Dashboard shell: sidebar + all pages
-css/style.css             Styling (sidebar layout, cards, tables)
-js/supabase-config.js     Supabase URL + anon key (sb) + service_role key (sbAdmin)
-js/common.js              Shared helpers (escapeHtml)
-js/auth.js                Login, logout, session + profile/role loading, nav gating
-js/nav.js                 Sidebar page switching
-js/dashboard.js           Summary cards
-js/users.js               Admin: list/edit/delete any user account, reset password
-js/students.js            Students page: add/edit/delete (admin), view-only (teacher/self)
-js/teachers.js            Teachers page: add/edit/delete (admin only)
-js/courses.js             Courses page: add/edit/delete (admin), view-only (everyone else)
-js/enrollment.js          Enrollments page: enroll/remove (admin), view (scoped by role)
-js/profile.js             Own profile: view + edit full name
-js/supabase-config.example.js  Template for supabase-config.js (safe to commit)
-build.js                  Vercel build step: writes supabase-config.js from env vars
-package.json              Just declares the "build" script Vercel runs
+public/login.html                     Login page (no sign-up)
+public/index.html                     Dashboard shell: sidebar + all pages
+public/css/style.css                  Styling (sidebar layout, cards, tables)
+public/js/supabase-config.js          Supabase URL + anon key (sb) + service_role key (sbAdmin)
+public/js/supabase-config.example.js  Template for supabase-config.js (safe to commit)
+public/js/common.js                   Shared helpers (escapeHtml)
+public/js/auth.js                     Login, logout, session + profile/role loading, nav gating
+public/js/nav.js                      Sidebar page switching
+public/js/dashboard.js                Summary cards
+public/js/users.js                    Admin: list/edit/delete any user account, reset password
+public/js/students.js                 Students page: add/edit/delete (admin), view-only (teacher/self)
+public/js/teachers.js                 Teachers page: add/edit/delete (admin only)
+public/js/courses.js                  Courses page: add/edit/delete (admin), view-only (everyone else)
+public/js/enrollment.js               Enrollments page: enroll/remove (admin), view (scoped by role)
+public/js/profile.js                  Own profile: view + edit full name
+build.js                              Vercel build step: writes supabase-config.js from env vars
+package.json                          Just declares the "build" script Vercel runs
 ```
 
 ## Data model (Postgres tables)
